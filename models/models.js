@@ -30,6 +30,7 @@ module.exports = (function() {
 	var Element = new Schema({
 		id: Schema.Types.ObjectId,
 		ownerId: Number,
+		pageId: Number,
 		content: String,
 		positionId: Number,
 		contentId: Number,  

@@ -1,6 +1,7 @@
 var Router = require('router'),
   helpers = require('../helpers/check_authentication'),
   models = require('../models/models'),
+  http = require('http'),
   memcachedInterface = require('../helpers/memcached');
 
 module.exports = (function() {
@@ -115,6 +116,21 @@ module.exports = (function() {
 			  });
 			}
 		});
+	});
+
+	router.get('/fullPage/:id', function (req, res){
+		console.log('GET /api/fullPage/:id');
+	  res.writeHead(200, { 'Content-Type': 'text/html'});
+	  var html = '<!DOCTYPE html><html><head><title>My Title</title></head><body>';
+	  return models.ElementModel.find(function (err, elements) {
+	    if (!err) {
+	      return res.send(elements);
+	    } else {
+	      return console.log(err);
+	    }
+	  });
+	  html += '</body></html>';
+	  res.end(html, 'utf-8');
 	});
 
 	router.get('/elements', function (req, res){

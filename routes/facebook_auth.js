@@ -4,10 +4,19 @@ var Router = require('router'),
   FacebookStrategy = require('passport-facebook').Strategy,
   cookieParser = require('cookie-parser'),
   config = require('../config.json'),
-  hat = require('hat');
+  hat = require('hat'),
+  helpers = require('../helpers/check_authentication');
 
 module.exports = (function() {
 	var router = Router();
+
+	passport.serializeUser(function(user, done) {
+	  done(null, user);
+	});
+
+	passport.deserializeUser(function(obj, done) {
+	  done(null, obj);
+	});
 
 	passport.use(new FacebookStrategy({
 			clientID: config.facebook_id,
@@ -15,6 +24,7 @@ module.exports = (function() {
 			callbackURL: "http://localhost:3000/auth/facebook/callback"
 		}, 
 		function(accessToken, refreshToken, profile, done){
+			console.log(profile)
 			return models.UserModel.findOrCreate({facebookId: profile.id}, function(err, user, created){
 				var cookieId
 				if (created == true){
@@ -26,24 +36,20 @@ module.exports = (function() {
 				} else {
 					cookieId = user.UniqueAccessToken
 				}
-				return user;
+				return done(null, user);
 			})
-		return null
 		}
 	));
 
-	router.get('/', function(req, res) {
-		passport.authenticate('facebook', function(user){
+	router.get('/', passport.authenticate('facebook', function(user){
 			console.log(user)
 		})
-	});
+	);
 
-	router.get('/callback', function(req, res) {
-		passport.authenticate('facebook', function(user) {
-	  	console.log(user)
-	    res.redirect('/success');
-	  })
-	});
+	router.get('/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
+  	function(req, res) {
+    	res.redirect('http://localhost:3000/auth/facebook/success');
+  });
 
 	router.get('/success', function(req, res) {
 		return helpers.ensureAuthenticated(req, res).then(function(authenticated){
