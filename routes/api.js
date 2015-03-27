@@ -1,11 +1,22 @@
 var Router = require('router'),
   helpers = require('../helpers/check_authentication'),
   models = require('../models/models'),
-  memcacheInterface = require('../helpers/memcached');
+  memcachedInterface = require('../helpers/memcached');
 
 module.exports = (function() {
 	var router = Router();
-	memcacheInterface.setMemcached("Yeah", "Yeah")
+	memcachedInterface.setMemcached("Yeah", "Yeah").then(function(status){
+		console.log(status)
+	})
+	memcachedInterface.getMemcached("Yeah").then(function(data){
+		console.log("getMemcached value", data)
+	})
+	memcachedInterface.replaceMemcached("Yeah", "Yeah").then(function(status){
+		console.log(status)
+	})
+	memcachedInterface.deleteMemcached("Yeah", "Yeah").then(function(status){
+		console.log(status)
+	})
 
 	router.get('/pages', function (req, res){
 		console.log('GET /api/pages');
@@ -51,13 +62,22 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-				return models.PageModel.findById(req.params.id, function(err, pageData){
-					if (!err){
-						return res.send(jobData);
+				memcachedString = "pages" + str(req.params.id)
+				return memcachedInterface.getMemcached(memcachedString).then(function(data){
+					if (data) {
+						res.send(data)
 					} else {
-						return res.send("Failed to find page " + req.params.id)
+						return models.PageModel.findById(req.params.id, function(err, pageData){
+							if (!err){
+								return memcachedInterface.setMemcached(memcachedString, pageData).then(function(){
+									return res.send(jobData)
+								});
+							} else {
+								return res.send("Failed to find page " + req.params.id)
+							}
+						})	
 					}
-				})			
+				})		
 			}
 		})
 
@@ -85,17 +105,21 @@ module.exports = (function() {
 		})
 	})
 
-	router.delete('/jobs/:id', function (req, res){
-		console.log('DELETE /api/jobs/id');
+	router.delete('/page/:id', function (req, res){
+		console.log('DELETE /api/page/id');
 		return helpers.ensureAuthenticated(req, res).then(function(authenticated){
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-			  return models.JobModel.findById(req.params.id, function (err, job) {
-			    return job.remove(function (err) {
+			  return models.PageModel.findById(req.params.id, function (err, page) {
+			    return page.remove(function (err) {
 			      if (!err) {
 			        console.log("removed");
-			        return res.send('');
+			        memcachedKey = "page" + str(req.params.id)
+							return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
+								console.log(status)
+								return res.send('');
+							})			        
 			      } else {
 			        console.log(err);
 			      }

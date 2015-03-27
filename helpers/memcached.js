@@ -38,7 +38,7 @@ module.exports = {
 	},
 	replaceMemcached: function(key, value) {
 		return new Promise(function(resolve){
-			return memcached.replace(key, value, 6000, function(err){
+			return memcached.replace(key, value, 60000, function(err){
 				if (err) {
 					console.log("error with setting key", err);
 					resolve(false)
