@@ -1,9 +1,11 @@
 var Router = require('router'),
-  helpers = require('../helpers/helpers'),
-  models = require('../models/models');
+  helpers = require('../helpers/check_authentication'),
+  models = require('../models/models'),
+  memcacheInterface = require('../helpers/memcached');
 
 module.exports = (function() {
 	var router = Router();
+	memcacheInterface.setMemcached("Yeah", "Yeah")
 
 	router.get('/pages', function (req, res){
 		console.log('GET /api/pages');
