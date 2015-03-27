@@ -40,7 +40,7 @@ module.exports = (function() {
 		    	var cookieId
 		    	if (created == true){
 		    		uniqueId = hat();
-		    		coookieId = niqueId
+		    		coookieId = uniqueId
 		    		models.UserModel.findByIdAndUpdate({googleId: firstChunk}, {$set: {uniqueAccessToken: uniqueId}}, function(err, user) {
 		    			console.log(err, user)
 		    		})

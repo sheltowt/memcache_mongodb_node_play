@@ -15,6 +15,7 @@ module.exports = (function() {
 		googleIdToken: String,
 		googleAccessToken: String,
 		uniqueAccessToken: String,
+		facebookId: String,
 		name: String,
 		admin: Boolean,
 	})

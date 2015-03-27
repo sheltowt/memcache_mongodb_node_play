@@ -9,16 +9,21 @@ var application_root = __dirname,
 	url = require('url'), 
 	Promise = require('bluebird'),
 	api = require('./routes/api'),
-	googleAuth = require('./routes/google_auth');
+	googleAuth = require('./routes/google_auth'),
+	facebookAuth = require('./routes/facebook_auth'), 
+	passport = require('passport');
 
 var app = express();
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(application_root, "public")));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api', api);
 app.use('/auth/google', googleAuth);
+app.use('/auth/facebook', facebookAuth);
 
 app.get('/', function (req, res) {
 	console.log('default page');
