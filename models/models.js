@@ -9,22 +9,26 @@ module.exports = (function() {
 	var Schema = mongoose.Schema; 
 
 	var User = new Schema({
+		id: Schema.Types.ObjectId,
 		openId: String,
 		googleId: String,
-		idToken: String,
-		accessToken: String,
+		googleIdToken: String,
+		googleAccessToken: String,
 		uniqueAccessToken: String,
 		name: String,
+		admin: Boolean,
 	})
 
 	var Page = new Schema({
 		id: Schema.Types.ObjectId,
+		ownerId: Number,
 		elementIds: Array,  
     modified: { type: Date, default: Date.now }
 	});
 
 	var Element = new Schema({
 		id: Schema.Types.ObjectId,
+		ownerId: Number,
 		content: String,
 		positionId: Number,
 		contentId: Number,  
@@ -33,6 +37,7 @@ module.exports = (function() {
 
 	var Position = new Schema({
 		id: Schema.Types.ObjectId,
+		ownerId: Number,
 		elementId: Number,
 		positionType: String,
 		top: Number,
@@ -44,6 +49,7 @@ module.exports = (function() {
 
 	var Content = new Schema({
 		id: Schema.Types.ObjectId,
+		ownerId: Number,
 		type: String,
 		elementId: Number,
     modified: { type: Date, default: Date.now }

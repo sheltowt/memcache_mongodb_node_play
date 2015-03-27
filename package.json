@@ -13,6 +13,7 @@
     "googleapis": "^2.0.2",
     "hat": "0.0.3",
     "memcached": "^2.1.0",
+    "mocha": "^2.2.1",
     "mongoose": "^4.0.0",
     "mongoose-auto-increment": "^3.2.3",
     "mongoose-findorcreate": "^0.1.2",

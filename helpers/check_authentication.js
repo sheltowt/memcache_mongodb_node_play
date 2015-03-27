@@ -5,7 +5,7 @@ module.exports = {
 	ensureAuthenticated: function(req, res) {
 		return new Promise(function(resolve){
 			cookie = req.cookies.access_token;
-	  	return models.UserModel.findOne({accessToken: cookie}, function(err, user){
+	  	return models.UserModel.findOne({uniqueAccessToken: cookie}, function(err, user){
 		  	if (err){
 		  		resolve(false);
 		  		console.log(err)

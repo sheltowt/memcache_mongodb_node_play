@@ -5,18 +5,6 @@ var Router = require('router'),
 
 module.exports = (function() {
 	var router = Router();
-	memcachedInterface.setMemcached("Yeah", "Yeah").then(function(status){
-		console.log(status)
-	})
-	memcachedInterface.getMemcached("Yeah").then(function(data){
-		console.log("getMemcached value", data)
-	})
-	memcachedInterface.replaceMemcached("Yeah", "Yeah").then(function(status){
-		console.log(status)
-	})
-	memcachedInterface.deleteMemcached("Yeah", "Yeah").then(function(status){
-		console.log(status)
-	})
 
 	router.get('/pages', function (req, res){
 		console.log('GET /api/pages');

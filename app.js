@@ -9,7 +9,7 @@ var application_root = __dirname,
 	url = require('url'), 
 	Promise = require('bluebird'),
 	api = require('./routes/api'),
-	auth = require('./routes/auth');
+	googleAuth = require('./routes/google_auth');
 
 var app = express();
 app.use(bodyParser.json())
@@ -18,7 +18,7 @@ app.use(express.static(path.join(application_root, "public")));
 app.use(cookieParser());
 
 app.use('/api', api);
-app.use('/auth', auth);
+app.use('/auth/google', googleAuth);
 
 app.get('/', function (req, res) {
 	console.log('default page');
