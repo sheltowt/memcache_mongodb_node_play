@@ -12,7 +12,8 @@ var application_root = __dirname,
 	session = require('express-session'),
 	url = require('url'), 
 	hat = require('hat'), 
-	Promise = require('bluebird');
+	Promise = require('bluebird'),
+	helpers = require('./helpers/helpers');
 
 var app = express();
 app.use(bodyParser.json())
@@ -64,30 +65,19 @@ app.get( '/auth/google/callback', function (req, res) {
 	});
 });
 
-function ensureAuthenticated(req, res, callback) {
-	return new Promise(function())
-  cookie = req.cookies.access_token;
-  models.UserModel.findOne({idToken: cookie}, function(err, user){
-  	if (err){
-  		return false
-  	} else if (user){
-  		return true
-  	} else {
-  		return false
-  	}
-  })
-}
-
-
 app.get('/auth/google/success', function (req, res) {
 	console.log('default page');
   res.send('you are successfully logged in');
 });
 
 app.get('/auth/google/practice', function (req, res) {
-	authentication = ensureAuthenticated(req, res);
-	console.log(authentication);
-  res.send('you are successfully logged in');
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+			return res.send('Success!!');
+		}
+	});
 });
 
 app.get('/auth/google/failure', function (req, res) {
@@ -115,15 +105,101 @@ app.get('/status', function (req, res) {
 });
 
 app.get('/api/pages', function (req, res){
-
 	console.log('GET /api/pages');
-  return models.PageModel.find(function (err, pages) {
-    if (!err) {
-      return res.send(pages);
-    } else {
-      return console.log(err);
-    }
-  });
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+			return models.PageModel.find(function (err, pages) {
+		    if (!err) {
+		      return res.send(pages);
+		    } else {
+					console.log(err);
+					return res.send('Request failed');
+		    }
+  		});
+		}
+	});
+});
+
+app.post('/api/pages', function (req, res){
+	console.log('POST /api/pages');
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+			page = new models.PageModel({
+				elementIds: req.body.elementIds
+			});
+			return page.save(function(err, pageData){
+				if (!err) {
+					return res.send(pageData)
+				} else {
+					return res.send('Update failed');					
+				}
+			})
+		}
+	});
+});
+
+app.get('/api/pages/:id', function(req, res){
+	console.log('GET /api/pages/:id')
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+			return models.PageModel.findById(req.params.id, function(err, pageData){
+				if (!err){
+					return res.send(jobData);
+				} else {
+					return res.send("Failed to find page " + req.params.id)
+				}
+			})			
+		}
+	})
+
+})
+
+app.put('/api/pages/:id', function(req, res){
+	console.log('PUT /api/pages/:id')
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+			return models.PageModel.findById(req.params.id, function(err, page){
+				if (!err && (page != null)){
+					return res.send(jobData);
+				} else {
+					return res.send("Failed to find page " + req.params.id)
+				}
+				return page.save(function (err) {
+					if (!err) {
+
+					}
+				})
+			})		
+		}
+	})
+})
+
+app.delete('/api/jobs/:id', function (req, res){
+	console.log('DELETE /api/jobs/id');
+	return helpers.ensureAuthenticated(req, res).then(function(authenticated){
+		if(!authenticated){
+			return res.redirect('/login');
+		} else {
+		  return models.JobModel.findById(req.params.id, function (err, job) {
+		    return job.remove(function (err) {
+		      if (!err) {
+		        console.log("removed");
+		        return res.send('');
+		      } else {
+		        console.log(err);
+		      }
+		    });
+		  });
+		}
+	});
 });
 
 app.get('/api/elements', function (req, res){
