@@ -122,9 +122,13 @@ module.exports = (function() {
 		console.log('GET /api/fullPage/:id');
 	  res.writeHead(200, { 'Content-Type': 'text/html'});
 	  var html = '<!DOCTYPE html><html><head><title>My Title</title></head><body>';
-	  return models.ElementModel.find(function (err, elements) {
+	  return models.PageModel.findById(req.params.id, function (err, page) {
 	    if (!err) {
-	      return res.send(elements);
+	      for (i = 0; i < page.elementIds.length; i++) {
+	      	models.ElementModel.findById(page.elementIds[i], function(err, element){
+	      		html += element.content
+	      	})
+	      }
 	    } else {
 	      return console.log(err);
 	    }
