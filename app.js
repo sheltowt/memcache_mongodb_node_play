@@ -11,15 +11,25 @@ var application_root = __dirname,
 	api = require('./routes/api'),
 	googleAuth = require('./routes/google_auth'),
 	facebookAuth = require('./routes/facebook_auth'), 
-	passport = require('passport');
+	passport = require('passport'),
+	extensionToAccept = require('express-extension-to-accept'),
+	methodOverride = require('method-override');
 
 var app = express();
-app.use(bodyParser.json())
 
 app.use(express.static(path.join(application_root, "public")));
 app.use(cookieParser());
+app.use(bodyParser.json())
+app.use(methodOverride());
+app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(extensionToAccept([
+  'html',
+  'xml',
+  'json'
+]));
 
 app.use('/api', api);
 app.use('/auth/google', googleAuth);
@@ -35,7 +45,7 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/logout', function(req, res){
-  // req.logout();
+	req.logout();
   res.clearCookie('access_token');
   res.send('You are successfully logged out');
 });

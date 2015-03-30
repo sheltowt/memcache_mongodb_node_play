@@ -24,19 +24,17 @@ module.exports = (function() {
 			callbackURL: "http://localhost:3000/auth/facebook/callback"
 		}, 
 		function(accessToken, refreshToken, profile, done){
-			console.log(profile)
 			return models.UserModel.findOrCreate({facebookId: profile.id}, function(err, user, created){
 				var cookieId
 				if (created == true){
 					uniqueId = hat();
 					cookieId = uniqueId
-					models.UserModel.findByIdAndUpdate({facebookId: user.facebookId}, {$set: {uniqueAccessToken: uniqueId}}, function(err, user){
-						console.log(err, user)
+					models.UserModel.update({facebookId: user.facebookId}, {$set: {uniqueAccessToken: uniqueId}}, function(err, user){
+						return done(null, profile);
 					})
 				} else {
-					cookieId = user.UniqueAccessToken
+					return done(null, profile);
 				}
-				return done(null, user);
 			})
 		}
 	));

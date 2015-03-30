@@ -4,6 +4,7 @@ var Router = require('router'),
 	cookieParser = require('cookie-parser'),
 	OAuth2 = google.auth.OAuth2,
   config = require('../config.json'),
+  passport = require('passport'),
   hat = require('hat');
 
 module.exports = (function() {
@@ -37,9 +38,16 @@ module.exports = (function() {
 		  if(!err) {
 		    oauth2Client.setCredentials(tokens);
 		    return models.UserModel.findOrCreate({googleId: firstChunk}, {googleAccessToken: tokens.access_token, googleIdToken: tokens.id_token}, function(err, user, created){
-		    	console.log(user._id)
-		    	res.cookie('access_token', user._id, { maxAge: 900000, httpOnly: true });
-		    	return res.redirect('/auth/google/success');
+		    	if (created == true) {
+		    		var accessToken = hat();
+		    		return models.UserModel.update({googleId: firstChunk}, {$set: {uniqueAccessToken: accessToken}}, function(err, user){
+				    	res.cookie('access_token', user.uniqueAccessToken, { maxAge: 900000, httpOnly: true });
+				    	return res.redirect('/auth/google/success');
+		    		})
+		    	} else {
+			    	res.cookie('access_token', user.uniqueAccessToken, { maxAge: 900000, httpOnly: true });
+			    		return res.redirect('/auth/google/success');
+			    }
 		    })
 		  }
 		});

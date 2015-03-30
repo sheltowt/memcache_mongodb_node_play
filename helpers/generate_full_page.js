@@ -8,11 +8,9 @@ module.exports = {
 			var i = 0;
 			for (var i = 0; i < elementIds; i++) {
 				models.ElementModel.findOne({elementId: elementIds[i]}, function (err, element) {
-					consol.log(err, element)
 					if (!err) {
 						html = html + element.content
 					}
-					console.log(element)
 				})
 			}
 			return setTimeout(function(html){
