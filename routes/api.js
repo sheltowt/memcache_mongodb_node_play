@@ -2,7 +2,8 @@ var Router = require('router'),
   helpers = require('../helpers/check_authentication'),
   models = require('../models/models'),
   http = require('http'),
-  memcachedInterface = require('../helpers/memcached');
+  memcachedInterface = require('../helpers/memcached'),
+  generateFullPage = require('../helpers/generate_full_page');
 
 module.exports = (function() {
 	var router = Router();
@@ -51,15 +52,17 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-				memcachedString = "pages" + str(req.params.id)
+				memcachedString = "pages" + req.params.id.toString()
 				return memcachedInterface.getMemcached(memcachedString).then(function(data){
 					if (data) {
-						res.send(data)
+						console.log("found in memcache")
+						return res.send(data)
 					} else {
-						return models.PageModel.findById(req.params.id, function(err, pageData){
+						return models.PageModel.findOne({pageId: req.params.id}, function(err, pageData){
 							if (!err){
 								return memcachedInterface.setMemcached(memcachedString, pageData).then(function(){
-									return res.send(jobData)
+									console.log(pageData)
+									return res.send(pageData)
 								});
 							} else {
 								return res.send("Failed to find page " + req.params.id)
@@ -94,7 +97,7 @@ module.exports = (function() {
 		})
 	})
 
-	router.delete('/page/:id', function (req, res){
+	router.delete('/pages/:id', function (req, res){
 		console.log('DELETE /api/page/id');
 		return helpers.ensureAuthenticated(req, res).then(function(authenticated){
 			if(!authenticated){
@@ -104,7 +107,7 @@ module.exports = (function() {
 			    return page.remove(function (err) {
 			      if (!err) {
 			        console.log("removed");
-			        memcachedKey = "page" + str(req.params.id)
+			        memcachedKey = "page" + req.params.id.toString()
 							return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
 								console.log(status)
 								return res.send('');
@@ -120,21 +123,21 @@ module.exports = (function() {
 
 	router.get('/fullPage/:id', function (req, res){
 		console.log('GET /api/fullPage/:id');
+		console.log(req.params.id)
 	  res.writeHead(200, { 'Content-Type': 'text/html'});
 	  var html = '<!DOCTYPE html><html><head><title>My Title</title></head><body>';
-	  return models.PageModel.findById(req.params.id, function (err, page) {
+	  return models.PageModel.findOne({pageId: req.params.id}, function (err, page) {
+	  	console.log(page)
+	  	console.log(err)
 	    if (!err) {
-	      for (i = 0; i < page.elementIds.length; i++) {
-	      	models.ElementModel.findById(page.elementIds[i], function(err, element){
-	      		html += element.content
-	      	})
-	      }
+	      return generateFullPage.returnFullHtml(page.elementIds, html).then(function(html){
+	      	html += '</body></html>';
+	  			return res.end(html, 'utf-8');
+	      })
 	    } else {
 	      return console.log(err);
 	    }
 	  });
-	  html += '</body></html>';
-	  res.end(html, 'utf-8');
 	});
 
 	router.get('/elements', function (req, res){
@@ -150,7 +153,7 @@ module.exports = (function() {
 
 	router.get('/positions', function (req, res){
 		console.log('GET /api/positions');
-	  return models.PageModel.find(function (err, pages) {
+	  return models.PositionModel.find(function (err, positions) {
 	    if (!err) {
 	      return res.send(positions);
 	    } else {
@@ -160,8 +163,8 @@ module.exports = (function() {
 	});
 
 	router.get('/contents', function (req, res){
-		console.log('GET /api/elements');
-	  return models.PageModel.find(function (err, contents) {
+		console.log('GET /api/contents');
+	  return models.ContentModel.find(function (err, contents) {
 	    if (!err) {
 	      return res.send(contents);
 	    } else {

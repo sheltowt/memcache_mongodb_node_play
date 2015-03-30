@@ -37,17 +37,8 @@ module.exports = (function() {
 		  if(!err) {
 		    oauth2Client.setCredentials(tokens);
 		    return models.UserModel.findOrCreate({googleId: firstChunk}, {googleAccessToken: tokens.access_token, googleIdToken: tokens.id_token}, function(err, user, created){
-		    	var cookieId
-		    	if (created == true){
-		    		uniqueId = hat();
-		    		coookieId = uniqueId
-		    		models.UserModel.findByIdAndUpdate({googleId: firstChunk}, {$set: {uniqueAccessToken: uniqueId}}, function(err, user) {
-		    			console.log(err, user)
-		    		})
-		    	} else {
-		    		cookieId = user.uniqueAccessToken
-		    	}
-		    	res.cookie('access_token', cookieId, { maxAge: 900000, httpOnly: true });
+		    	console.log(user._id)
+		    	res.cookie('access_token', user._id, { maxAge: 900000, httpOnly: true });
 		    	return res.redirect('/auth/google/success');
 		    })
 		  }

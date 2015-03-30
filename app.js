@@ -31,13 +31,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-	res.sendFile(__dirname+'/public/index.html', { user: req.user });
+	res.sendFile(__dirname+'/public/index.html');
 });
 
 app.get('/logout', function(req, res){
-  req.logout();
+  // req.logout();
   res.clearCookie('access_token');
-  res.redirect('/', { user: req.user });
+  res.send('You are successfully logged out');
 });
 
 app.get('/status', function (req, res) {

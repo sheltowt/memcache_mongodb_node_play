@@ -1,0 +1,14 @@
+//mongoimport -d weebly -c users users.json
+//mongoimport -d weebly -c elements elements.json
+//mongoimport -d weebly -c pages pages.json
+//mongoimport -d weebly -c posisions positions.json
+mongoimport -d weebly -c contents contents.sjon
+
+
+db.pages.insert({pageId: 1, owner_id: 1, elementIds: [1, 2, 3, 4]})
+db.pages.insert({pageId: 2, owner_id: 1, elementIds: [5, 6, 7, 8]})
+
+db.elements.insert({elementId: 1, ownerId: 1, content: "<div><h1> Wow this is so epic</h1></div>", positionId: 1, contentId: 1, pageId: 1})
+db.elements.insert({elementId: 2, ownerId: 1, content: "<div><h1> Wow this is so epic</h1></div>", positionId: 1, contentId: 1, pageId: 1})
+db.elements.insert({elementId: 3, ownerId: 1, content: "<div><h1> Wow this is so epic</h1></div>", positionId: 1, contentId: 1, pageId: 1})
+db.elements.insert({elementId: 4, ownerId: 1, content: "<div><h1> Wow this is so epic</h1></div>", positionId: 1, contentId: 1, pageId: 1})

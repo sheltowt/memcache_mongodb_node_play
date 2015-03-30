@@ -1,30 +1,24 @@
 var Promise = require('bluebird'),
 	models = require('../models/models');
 
-var counter = Promise.method(function(i){
-    return i++;
-})
-
-var getData = function(elementIds, i, ){
-	return new Promise(function(resolve){
-
-	})
-}
-
-function getAll(max, results){
-    var results = results || [];
-    return counter().then(function(result){
-        results.push(result);
-        return (result < max) ? getAll(max, results) : results
-    })
-}
-
 module.exports = {
 	returnFullHtml: function(elementIds, html) {
-		var i = 0;
-		var max = len(elementIds)
-		getAll(10).then(function(data){
-    	console.log(data);
+		console.log(elementIds)
+		return new Promise(function(resolve){
+			var i = 0;
+			for (var i = 0; i < elementIds; i++) {
+				models.ElementModel.findOne({elementId: elementIds[i]}, function (err, element) {
+					consol.log(err, element)
+					if (!err) {
+						html = html + element.content
+					}
+					console.log(element)
+				})
+			}
+			return setTimeout(function(html){
+				console.log(html)
+				return resolve(html)
+			}, 30000);
 		})
 	}
 }

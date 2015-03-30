@@ -23,12 +23,14 @@ module.exports = (function() {
 	var Page = new Schema({
 		id: Schema.Types.ObjectId,
 		ownerId: Number,
+		pageId: Number,
 		elementIds: Array,  
     modified: { type: Date, default: Date.now }
 	});
 
 	var Element = new Schema({
 		id: Schema.Types.ObjectId,
+		elementId: Number,
 		ownerId: Number,
 		pageId: Number,
 		content: String,
