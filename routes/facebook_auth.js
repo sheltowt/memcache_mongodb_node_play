@@ -39,11 +39,6 @@ module.exports = (function() {
 		}
 	));
 
-	router.get('/', passport.authenticate('facebook', function(user){
-			console.log(user)
-		})
-	);
-
 	router.get('/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
   	function(req, res) {
     	res.redirect('http://localhost:3000/auth/facebook/success');

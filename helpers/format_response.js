@@ -1,6 +1,8 @@
 var Promise = require('bluebird'),
 	models = require('../models/models'),
-	js2xmlparser = require('js2xmlparser');
+	json2html = require('node-json2html'),
+	js2xmlparser = require('js2xmlparser'),
+	fullPage = require('./generate_full_page');;
 
 module.exports = {
 	formatResponse: function(res, data) {
@@ -9,6 +11,38 @@ module.exports = {
 				json: function() {
 					res.set('Content-Type', 'application/json');
 					return resolve(res.send(data))
+				},
+				html: function(){
+					res.set('Content-Type', 'text/html')
+					var type
+					if (data instanceof Array){
+						type = data[0].type
+					} else {
+						type = data.type
+					}
+					var html
+					switch(type) {
+						case "element":
+							transform = {'tag':'div','html':'${content}'};
+							html = json2html.transform(data, transform)
+							return resolve(res.end(html, 'utf-8'))	
+							break;
+						case "content":
+							transform = {'tag':'div','html':'${content}'};
+							html = json2html.transform(data, transform)
+							return resolve(res.end(html, 'utf-8'))	
+							break;
+						case "position":
+							return res.send("Only JSON and XML are available for this type, please specify .json or .xml");
+							break;
+						case "page":
+							return fullPage.returnFullHtml(res, data).then(function(html){
+								return resolve(res.end(html, 'utf-8'))
+							})
+						default:
+							return res.send("improper type");
+					}
+				
 				},
 				xml: function() {
 					res.set('Content-Type', 'text/xml');
@@ -20,7 +54,7 @@ module.exports = {
 					options["declaration"]["include"] = false
 					var xmlData = js2xmlparser("data", data, options)
 					return resolve(res.send(xmlData))
-				}
+				},
 			})
 		})
 	}

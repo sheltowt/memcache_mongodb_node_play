@@ -13,7 +13,8 @@ var application_root = __dirname,
 	facebookAuth = require('./routes/facebook_auth'), 
 	passport = require('passport'),
 	extensionToAccept = require('express-extension-to-accept'),
-	methodOverride = require('method-override');
+	methodOverride = require('method-override'),
+	ejs = require('ejs');
 
 var app = express();
 
@@ -25,12 +26,17 @@ app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.set('views', __dirname + '/public/views');
+app.engine('html', ejs.renderFile);
+app.set('view engine', 'ejs');
+
 app.use(extensionToAccept([
-  'html',
+  'json',
   'xml',
-  'json'
+  'html'
 ]));
 
+app.use(bodyParser.json())
 app.use('/api', api);
 app.use('/auth/google', googleAuth);
 app.use('/auth/facebook', facebookAuth);

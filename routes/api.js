@@ -15,16 +15,26 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-				return models.PageModel.find(function (err, pages) {
-			    if (!err) {
-						return formatter.formatResponse(res, pages).then(function(response){
+				return memcachedInterface.getMemcached("pagesAll").then(function(data){
+					if (data) {
+						return formatter.formatResponse(res, data).then(function(response){
 							return response
 						})
-			    } else {
-						console.log(err);
-						return res.send('Request failed');
-			    }
-	  		});
+					} else {
+						return models.PageModel.find(function (err, pages) {
+					    if (!err) {
+					    	return memcachedInterface.setMemcached("pagesAll", pages).then(function(data){
+									return formatter.formatResponse(res, pages).then(function(response){
+										return response
+									})
+					    	})
+					    } else {
+								console.log(err);
+								return res.send('Request failed');
+					    }
+			  		});
+					}
+				})
 			}
 		});
 	});
@@ -35,19 +45,21 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-				page = new models.PageModel({
-					elementIds: req.body.elementIds,
-					ownerId: req.body.ownerId,
-					pageId: req.body.pageId
-				});
-				return page.save(function(err, pageData){
-					if (!err) {
-						return formatter.formatResponse(res, pageData).then(function(response){
-							return response
-						})
-					} else {
-						return res.send('Update failed');					
-					}
+				return memcachedInterface.deleteMemcached("pagesAll").then(function(response){
+					page = new models.PageModel({
+						elementIds: req.body.elementIds,
+						ownerId: req.body.ownerId,
+						pageId: req.body.pageId
+					});
+					return page.save(function(err, pageData){
+						if (!err) {
+							return formatter.formatResponse(res, pageData).then(function(response){
+								return response
+							})
+						} else {
+							return res.send('Update failed');					
+						}
+					})
 				})
 			}
 		});
@@ -66,7 +78,7 @@ module.exports = (function() {
 							return response
 						})
 					} else {
-						return models.PageModel.findOne({pageId: req.params.id}, function(err, pageData){
+						return models.PageModel.findOne({pageId: parseInt(req.params.id)}, function(err, pageData){
 							if (!err){
 								return memcachedInterface.setMemcached(memcachedString, pageData).then(function(){
 									return formatter.formatResponse(res, pageData).then(function(response){
@@ -90,21 +102,26 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-				return models.PageModel.findById(req.params.id, function(err, page){
-					if (!err && (page != null)){
-						page = new models.PageModel({
-							elementIds: req.body.elementIds,
-							ownerId: req.body.ownerId,
-							pageId: req.body.pageId
-						});
-						page.save();
-						return formatter.formatResponse(res, page).then(function(response){
-							return response
+				return memcachedInterface.deleteMemcached("pagesAll").then(function(response){
+					memcacheString = "pages" + req.params.id.toString()
+					return memcachedInterface.deleteMemcached(memcacheString).then(function(response){
+						return models.PageModel.findById(req.params.id, function(err, page){
+							if (!err && (page != null)){
+								page = new models.PageModel({
+									elementIds: req.body.elementIds,
+									ownerId: req.body.ownerId,
+									pageId: req.body.pageId
+								});
+								page.save();
+								return formatter.formatResponse(res, page).then(function(response){
+									return response
+								})
+							} else {
+								return res.send("Failed to find page " + req.params.id)
+							}
 						})
-					} else {
-						return res.send("Failed to find page " + req.params.id)
-					}
-				})		
+					})
+				})	
 			}
 		})
 	})
@@ -115,38 +132,27 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-			  return models.PageModel.findById(req.params.id, function (err, page) {
-			    return page.remove(function (err) {
-			      if (!err) {
-			        memcachedKey = "page" + req.params.id.toString()
-							return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
-								console.log(status)
-								return res.send('');
-							})			        
-			      } else {
-			        console.log(err);
-			      }
-			    });
-			  });
+				return memcachedInterface.deleteMemcached("pagesAll").then(function(response){
+					memcacheString = "pages" + req.params.id.toString()
+					return memcachedInterface.deleteMemcached(memcacheString).then(function(response){
+					  return models.PageModel.findById(req.params.id, function (err, page) {
+					    return page.remove(function (err) {
+					      if (!err) {
+					        memcachedKey = "page" + req.params.id.toString()
+									return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
+										console.log(status)
+										return res.send('');
+									})			        
+					      } else {
+					        console.log(err);
+					      	return res.send("Failed to find page " + err)
+					      }
+					    });
+					  });
+					});
+				});
 			}
 		});
-	});
-
-	router.get('/fullPage/:id', function (req, res){
-		console.log('GET /api/fullPage/:id');
-		console.log(req.params.id)
-	  res.writeHead(200, { 'Content-Type': 'text/html'});
-	  var html = '<!DOCTYPE html><html><head><title>My Title</title></head><body>';
-	  return models.PageModel.findOne({pageId: req.params.id}, function (err, page) {
-	    if (!err) {
-	      return generateFullPage.returnFullHtml(page.elementIds, html).then(function(html){
-	      	html += '</body></html>';
-	  			return res.end(html, 'utf-8');
-	      })
-	    } else {
-	      return console.log(err);
-	    }
-	  });
 	});
 
 	router.get('/elements', function (req, res){
@@ -155,15 +161,26 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-			  return models.ElementModel.find(function (err, elements) {
-			    if (!err) {
-						return formatter.formatResponse(res, elements).then(function(response){
+				return memcachedInterface.getMemcached("elementsAll").then(function(data){
+					if (data) {
+						return formatter.formatResponse(res, data).then(function(response){
 							return response
 						})
-			    } else {
-			      return console.log(err);
-			    }
-			  });
+					} else {
+						return models.ElementModel.find(function (err, elements) {
+					    if (!err) {
+					    	return memcachedInterface.setMemcached("elementsAll", elements).then(function(data){
+									return formatter.formatResponse(res, elements).then(function(response){
+										return response
+									})
+					    	})
+					    } else {
+								console.log(err);
+								return res.send('Request failed');
+					    }
+			  		});
+					}
+				})
 			}
 		});
 	});
@@ -174,15 +191,26 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-			  return models.PositionModel.find(function (err, positions) {
-			    if (!err) {
-						return formatter.formatResponse(res, positions).then(function(response){
+				return memcachedInterface.getMemcached("positionsAll").then(function(data){
+					if (data) {
+						return formatter.formatResponse(res, data).then(function(response){
 							return response
 						})
-			    } else {
-			      return console.log(err);
-			    }
-			  });
+					} else {
+						return models.PositionModel.find(function (err, positions) {
+					    if (!err) {
+					    	return memcachedInterface.setMemcached("positionsAll", positions).then(function(data){
+									return formatter.formatResponse(res, positions).then(function(response){
+										return response
+									})
+					    	})
+					    } else {
+								console.log(err);
+								return res.send('Request failed');
+					    }
+			  		});
+					}
+				})
 			}
 		});
 	});
@@ -193,15 +221,26 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
-			  return models.ContentModel.find(function (err, contents) {
-			    if (!err) {
-						return formatter.formatResponse(res, contents).then(function(response){
+				return memcachedInterface.getMemcached("contentsAll").then(function(data){
+					if (data) {
+						return formatter.formatResponse(res, data).then(function(response){
 							return response
 						})
-			    } else {
-			      return console.log(err);
-			    }
-			  });
+					} else {
+						return models.ContentModel.find(function (err, contents) {
+					    if (!err) {
+					    	return memcachedInterface.setMemcached("contentsAll", contents).then(function(data){
+									return formatter.formatResponse(res, contents).then(function(response){
+										return response
+									})
+					    	})
+					    } else {
+								console.log(err);
+								return res.send('Request failed');
+					    }
+			  		});
+					}
+				})
 			}
 		});
 	});

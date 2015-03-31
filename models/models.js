@@ -10,6 +10,7 @@ module.exports = (function() {
 
 	var User = new Schema({
 		id: Schema.Types.ObjectId,
+		type: String,
 		openId: String,
 		googleId: String,
 		googleIdToken: String,
@@ -22,6 +23,7 @@ module.exports = (function() {
 
 	var Page = new Schema({
 		id: Schema.Types.ObjectId,
+		type: String,
 		ownerId: Number,
 		pageId: Number,
 		elementIds: Array,  
@@ -30,6 +32,7 @@ module.exports = (function() {
 
 	var Element = new Schema({
 		id: Schema.Types.ObjectId,
+		type: String,
 		elementId: Number,
 		ownerId: Number,
 		pageId: Number,
@@ -41,6 +44,7 @@ module.exports = (function() {
 
 	var Position = new Schema({
 		id: Schema.Types.ObjectId,
+		type: String,
 		ownerId: Number,
 		elementId: Number,
 		positionType: String,
@@ -53,6 +57,7 @@ module.exports = (function() {
 
 	var Content = new Schema({
 		id: Schema.Types.ObjectId,
+		type: String,
 		ownerId: Number,
 		type: String,
 		elementId: Number,

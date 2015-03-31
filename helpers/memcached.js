@@ -50,7 +50,7 @@ module.exports = {
 		})
 
 	},
-	deleteMemcached: function(key, value) {
+	deleteMemcached: function(key) {
 		return new Promise(function(resolve){
 			return memcached.del(key, function(err){
 				if (err) {
