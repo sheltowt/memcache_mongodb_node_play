@@ -15,10 +15,13 @@ module.exports = {
 				html: function(){
 					res.set('Content-Type', 'text/html')
 					var type
+					var single
 					if (data instanceof Array){
 						type = data[0].type
+						single = false
 					} else {
 						type = data.type
+						single = true
 					}
 					var html
 					switch(type) {
@@ -36,7 +39,7 @@ module.exports = {
 							return res.send("Only JSON and XML are available for this type, please specify .json or .xml");
 							break;
 						case "page":
-							return fullPage.returnFullHtml(res, data).then(function(html){
+							return fullPage.returnFullHtml(res, data, single).then(function(html){
 								return resolve(res.end(html, 'utf-8'))
 							})
 						default:

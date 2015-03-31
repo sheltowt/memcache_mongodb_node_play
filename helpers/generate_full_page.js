@@ -3,48 +3,76 @@ var Promise = require('bluebird'),
 	json2html = require('node-json2html'),
 	models = require('../models/models');
 
-//collect all of elements into an array
-//iterate through and add all of them together
-// return html
-// var callback = function(data){
-// 	return data
-// }
-
 var retrieveElement = function(elementId, callback) {
 	process.nextTick(function() {
 		models.ElementModel.findOne({elementId: elementId}, function(err, data){
-			callback(null, data)
+			if (data) {
+				callback(null, data)
+			} else {
+				callback(err, null)
+			}
 		})
 	})
 }
 
-var returnAllElements = function(page){
-	return new Promise(function(resolve){
-		console.log(page)
+var returnAllElements = function(page, callback){
+	process.nextTick(function(){
 		async.map(page.elementIds, retrieveElement.bind(retrieveElement), function(err, result){
-			console.log(err)
 			console.log(result)
-			transform = {'tag':'div','html':'${content}'};
-			html = json2html.transform(result, transform)			
-			return resolve(html)
+			if (err){
+				callback(null, "empty")
+			} else {
+				if (result[0]){
+					transform = {'tag':'div','html':'${content}'};
+					html = json2html.transform(result, transform)
+					callback(null, html)
+				} else {
+					callback(null, "empty")
+				}
+			}
 		})
 	})
 }
 
-// var returnAllPages = function(pages){
-// 	return new Promise(function(resolve){
-// 		async.map
-// 	})
-// }
+var returnAllElementsPromise = function(page){
+	return new Promise(function(resolve){
+		async.map(page.elementIds, retrieveElement.bind(retrieveElement), function(err, result){
+			transform = {'tag':'div','html':'${content}'};
+			html = json2html.transform(result, transform)		
+			resolve(html)
+		})
+	})
+}
+
+var returnAllPages = function(pages){
+	return new Promise(function(resolve){
+		async.map(pages, returnAllElements.bind(returnAllElements), function(err, htmlArray){
+			resolve(htmlArray)
+		})
+	})
+}
 
 
 module.exports = {
-	returnFullHtml: function(res, page) {
+	returnFullHtml: function(res, pages, single) {
 		return new Promise(function(resolve){
-			returnAllElements(page[0]).then(function(html){
-				console.log(html)
-				resolve(html)
-			})
+			if (single) {
+				returnAllElementsPromise(pages).then(function(html){
+					resolve(html)
+				})
+			} else {
+				returnAllPages(pages).then(function(html){
+					htmlStart = ""
+					for (var i = 0; i < html.length; i++) {
+						if (html[i] != "empty"){
+							htmlStart += "<h1> NEW PAGE <h1>"
+							htmlStart += html[i]
+						}
+					}
+					console.log(htmlStart)
+					resolve(htmlStart)
+				})
+			}
 		})
 	}
 }
