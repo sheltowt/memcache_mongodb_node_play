@@ -3,6 +3,7 @@ var Router = require('router'),
  	google = require('googleapis'),
 	cookieParser = require('cookie-parser'),
 	OAuth2 = google.auth.OAuth2,
+  helpers = require('../helpers/check_authentication'),
   config = require('../config.json'),
   passport = require('passport'),
   hat = require('hat');
@@ -53,10 +54,6 @@ module.exports = (function() {
 	});
 
 	router.get('/success', function (req, res) {
-	  res.send('you are successfully logged in');
-	});
-
-	router.get('/practice', function (req, res) {
 		return helpers.ensureAuthenticated(req, res).then(function(authenticated){
 			if(!authenticated){
 				return res.redirect('/login');
@@ -64,11 +61,6 @@ module.exports = (function() {
 				return res.send('Success!!');
 			}
 		});
-	});
-
-	router.get('/failure', function (req, res) {
-		console.log('default fail page');
-	  res.redirect('/login');
 	});
 
 	return router;
