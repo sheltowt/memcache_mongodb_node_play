@@ -28,7 +28,7 @@ module.exports = {
 						case "element":
 							transform = {'tag':'div','html':'${content}'};
 							html = json2html.transform(data, transform)
-							return resolve(res.end(html, 'utf-8'))	
+							return resolve(res.end(html, 'utf-8'));	
 							break;
 						case "content":
 							transform = {'tag':'div','html':'${content}'};

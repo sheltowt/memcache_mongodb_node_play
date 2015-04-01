@@ -16,9 +16,9 @@ module.exports = {
 				splitElement = element.content.split("XXXXX");
 				if (splitElement.length == 2){
 					element.content = splitElement[0] + content.content + splitElement[1]
-					resolve(element)
+					resolve(element);
 				} else {
-					resolve(element)
+					resolve(element);
 				}
 			});
 		});

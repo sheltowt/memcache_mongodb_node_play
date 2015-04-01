@@ -22,7 +22,7 @@ module.exports = {
 				positioning += "right: " + position.right + "px; }"
 				positioning += "</style>"
 				element.content = element.content + positioning
-				resolve(element)
+				resolve(element);
 			});
 		});
 	}

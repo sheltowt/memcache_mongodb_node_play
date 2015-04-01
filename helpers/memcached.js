@@ -12,9 +12,9 @@ module.exports = {
 		return new Promise(function(resolve){
 			return memcached.set(key, value, 60000, function(err){
 				if (err) {
-					resolve(false)
+					resolve(false);
 				} else {
-					resolve(true)
+					resolve(true);
 				}
 			});
 		});
@@ -23,11 +23,11 @@ module.exports = {
 		return new Promise(function(resolve){
 			return memcached.get(key, function (err, data) {
 				if (err) {
-					resolve(null)
+					resolve(null);
 				} else if (data) {
-					resolve(data)
+					resolve(data);
 				} else {
-					resolve(null)
+					resolve(null);
 				}
 			});
 		});
@@ -36,9 +36,9 @@ module.exports = {
 		return new Promise(function(resolve){
 			return memcached.replace(key, value, 60000, function(err){
 				if (err) {
-					resolve(false)
+					resolve(false);
 				} else {
-					resolve(true)
+					resolve(true);
 				}				
 			});
 		});
@@ -47,9 +47,9 @@ module.exports = {
 		return new Promise(function(resolve){
 			return memcached.del(key, function(err){
 				if (err) {
-					resolve(false)
+					resolve(false);
 				} else {
-					resolve(true)
+					resolve(true);
 				}
 			});
 		});
