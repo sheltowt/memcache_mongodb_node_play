@@ -5,8 +5,8 @@ var getPosition = function(element) {
 	return new Promise(function(resolve){
 		models.PositionModel.findOne({elementId: element.elementId}, function(err, data){
 			resolve(data);
-		})
-	})
+		});
+	});
 }
 
 module.exports = {
@@ -24,6 +24,6 @@ module.exports = {
 				element.content = element.content + positioning
 				resolve(element)
 			});
-		})
+		});
 	}
 }

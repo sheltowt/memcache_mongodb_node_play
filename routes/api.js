@@ -19,21 +19,21 @@ module.exports = (function() {
 					if (data) {
 						return formatter.formatResponse(res, data).then(function(response){
 							return response
-						})
+						});
 					} else {
 						return models.PageModel.find(function (err, pages) {
 					    if (!err) {
 					    	return memcachedInterface.setMemcached("pagesAll", pages).then(function(data){
 									return formatter.formatResponse(res, pages).then(function(response){
 										return response
-									})
-					    	})
+									});
+					    	});
 					    } else {
 								return res.send('Request failed');
 					    }
 			  		});
 					}
-				})
+				});
 			}
 		});
 	});
@@ -57,12 +57,12 @@ module.exports = (function() {
 						if (!err) {
 							return formatter.formatResponse(res, pageData).then(function(response){
 								return response
-							})
+							});
 						} else {
 							return res.send('Update failed');					
 						}
-					})
-				})
+					});
+				});
 			}
 		});
 	});
@@ -78,25 +78,25 @@ module.exports = (function() {
 					if (data) {
 						return formatter.formatResponse(res, data).then(function(response){
 							return response
-						})
+						});
 					} else {
 						return models.PageModel.findOne({pageId: parseInt(req.params.id)}, function(err, pageData){
 							if (!err){
 								return memcachedInterface.setMemcached(memcachedString, pageData).then(function(){
 									return formatter.formatResponse(res, pageData).then(function(response){
 										return response
-									})
+									});
 								});
 							} else {
 								return res.send("Failed to find page " + req.params.id)
 							}
-						})	
+						});	
 					}
-				})		
+				});		
 			}
-		})
+		});
 
-	})
+	});
 
 	router.put('/pages/:id', function(req, res){
 		console.log('PUT /api/pages/:id')
@@ -114,16 +114,16 @@ module.exports = (function() {
 							if (!err && (page != null)){
 								return formatter.formatResponse(res, page).then(function(response){
 									return response
-								})
+								});
 							} else {
 								return res.send("Failed to update page " + req.params.id)
 							}
-						})
-					})
-				})	
+						});
+					});
+				});	
 			}
-		})
-	})
+		});
+	});
 
 	router.delete('/pages/:id', function (req, res){
 		console.log('DELETE /api/page/:id');
@@ -140,7 +140,7 @@ module.exports = (function() {
 					        memcachedKey = "page" + req.params.id.toString()
 									return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
 										return res.send('Deleted page');
-									})			        
+									});			        
 					      } else {
 					      	return res.send("Failed to find page " + err)
 					      }
@@ -162,21 +162,21 @@ module.exports = (function() {
 					if (data) {
 						return formatter.formatResponse(res, data).then(function(response){
 							return response
-						})
+						});
 					} else {
 						return models.ElementModel.find(function (err, elements) {
 					    if (!err) {
 					    	return memcachedInterface.setMemcached("elementsAll", elements).then(function(data){
 									return formatter.formatResponse(res, elements).then(function(response){
 										return response
-									})
-					    	})
+									});
+					    	});
 					    } else {
 								return res.send('Request failed');
 					    }
 			  		});
 					}
-				})
+				});
 			}
 		});
 	});
@@ -191,21 +191,21 @@ module.exports = (function() {
 					if (data) {
 						return formatter.formatResponse(res, data).then(function(response){
 							return response
-						})
+						});
 					} else {
 						return models.PositionModel.find(function (err, positions) {
 					    if (!err) {
 					    	return memcachedInterface.setMemcached("positionsAll", positions).then(function(data){
 									return formatter.formatResponse(res, positions).then(function(response){
 										return response
-									})
-					    	})
+									});
+					    	});
 					    } else {
 								return res.send('Request failed');
 					    }
 			  		});
 					}
-				})
+				});
 			}
 		});
 	});
@@ -220,24 +220,25 @@ module.exports = (function() {
 					if (data) {
 						return formatter.formatResponse(res, data).then(function(response){
 							return response
-						})
+						});
 					} else {
 						return models.ContentModel.find(function (err, contents) {
 					    if (!err) {
 					    	return memcachedInterface.setMemcached("contentsAll", contents).then(function(data){
 									return formatter.formatResponse(res, contents).then(function(response){
 										return response
-									})
-					    	})
+									});
+					    	});
 					    } else {
 								return res.send('Request failed');
 					    }
 			  		});
 					}
-				})
+				});
 			}
 		});
 	});
 
 	return router;
+	
 })();

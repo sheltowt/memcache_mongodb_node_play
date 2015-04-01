@@ -10,10 +10,10 @@ module.exports = {
 			res.format({
 				json: function() {
 					res.set('Content-Type', 'application/json');
-					return resolve(res.send(data))
+					return resolve(res.send(data));
 				},
 				html: function(){
-					res.set('Content-Type', 'text/html')
+					res.set('Content-Type', 'text/html');
 					var type
 					var single
 					if (data instanceof Array){
@@ -41,11 +41,10 @@ module.exports = {
 						case "page":
 							return fullPage.returnFullHtml(res, data, single).then(function(html){
 								return resolve(res.end(html, 'utf-8'))
-							})
+							});
 						default:
 							return res.send("improper type");
 					}
-				
 				},
 				xml: function() {
 					res.set('Content-Type', 'text/xml');
@@ -58,7 +57,7 @@ module.exports = {
 					var xmlData = js2xmlparser("data", data, options)
 					return resolve(res.send(xmlData))
 				},
-			})
-		})
+			});
+		});
 	}
 }

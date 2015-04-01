@@ -5,8 +5,8 @@ var getContent = function(element) {
 	return new Promise(function(resolve){
 		models.ContentModel.findOne({elementId: element.elementId}, function(err, data){
 			resolve(data);
-		})
-	})
+		});
+	});
 }
 
 module.exports = {
@@ -21,6 +21,6 @@ module.exports = {
 					resolve(element)
 				}
 			});
-		})
+		});
 	}
 }

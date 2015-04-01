@@ -16,8 +16,8 @@ module.exports = {
 				} else {
 					resolve(true)
 				}
-			})
-		})
+			});
+		});
 	},
 	getMemcached: function(key) {
 		return new Promise(function(resolve){
@@ -30,7 +30,7 @@ module.exports = {
 					resolve(null)
 				}
 			});
-		})
+		});
 	},
 	replaceMemcached: function(key, value) {
 		return new Promise(function(resolve){
@@ -40,9 +40,8 @@ module.exports = {
 				} else {
 					resolve(true)
 				}				
-			})
-		})
-
+			});
+		});
 	},
 	deleteMemcached: function(key) {
 		return new Promise(function(resolve){
@@ -52,7 +51,7 @@ module.exports = {
 				} else {
 					resolve(true)
 				}
-			})
-		})
+			});
+		});
 	}
 }

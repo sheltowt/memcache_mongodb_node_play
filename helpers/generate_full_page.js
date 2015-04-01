@@ -17,8 +17,8 @@ var retrieveElement = function(elementId, callback) {
 			} else {
 				callback(err, null)
 			}
-		})
-	})
+		});
+	});
 }
 
 var returnAllElements = function(page, callback){
@@ -35,8 +35,8 @@ var returnAllElements = function(page, callback){
 					callback(null, "empty")
 				}
 			}
-		})
-	})
+		});
+	});
 }
 
 var returnAllElementsPromise = function(page){
@@ -45,16 +45,16 @@ var returnAllElementsPromise = function(page){
 			transform = {'tag':'div','html':'${content}'};
 			html = json2html.transform(result, transform)		
 			resolve(html)
-		})
-	})
+		});
+	});
 }
 
 var returnAllPages = function(pages){
 	return new Promise(function(resolve){
 		async.map(pages, returnAllElements.bind(returnAllElements), function(err, htmlArray){
 			resolve(htmlArray)
-		})
-	})
+		});
+	});
 }
 
 var headerString = "<head><title>The Entrar-shadow Website form | w3layouts</title><meta charset=\"utf-8\"><link href=\"localhost:3000/css/pages.css\" rel='stylesheet' type='text/css' /><meta name='viewport' content='width=device-width, initial-scale=1'><script type='application/x-javascript'> addEventListener('load', function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script><!--webfonts--><link href='http://fonts.googleapis.com/css?family=Open+Sans:600italic,400,300,600,700' rel='stylesheet' type='text/css'><!--//webfonts--></head>"
@@ -68,7 +68,7 @@ module.exports = {
 					newString += headerString
 					newString += html
 					resolve(newString)
-				})
+				});
 			} else {
 				returnAllPages(pages).then(function(html){
 					htmlStart = ""
@@ -80,8 +80,8 @@ module.exports = {
 						}
 					}
 					resolve(htmlStart)
-				})
+				});
 			}
-		})
+		});
 	}
 }

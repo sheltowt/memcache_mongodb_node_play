@@ -36,17 +36,20 @@ module.exports = (function() {
 		  	firstChunk = tokens.id_token.split(".")[0]
 		    oauth2Client.setCredentials(tokens);
 		    return models.UserModel.findOrCreate({googleId: firstChunk}, {googleAccessToken: tokens.access_token, googleIdToken: tokens.id_token}, function(err, user, created){
+		    	if (err) {
+		    		return res.redirect('/login');
+		    	}
 		    	if (created == true) {
 		    		var accessToken = hat();
 		    		return models.UserModel.update({googleId: firstChunk}, {$set: {uniqueAccessToken: accessToken}}, function(err, user){
 				    	res.cookie('access_token', user.uniqueAccessToken, { maxAge: 900000, httpOnly: true });
 				    	return res.redirect('/auth/google/success');
-		    		})
+		    		});
 		    	} else {
 			    	res.cookie('access_token', user.uniqueAccessToken, { maxAge: 900000, httpOnly: true });
-			    		return res.redirect('/auth/google/success');
+			    	return res.redirect('/auth/google/success');
 			    }
-		    })
+		    });
 		  } else {
 		  	return res.redirect('/login')
 		  }
@@ -64,4 +67,5 @@ module.exports = (function() {
 	});
 
 	return router;
+	
 })();

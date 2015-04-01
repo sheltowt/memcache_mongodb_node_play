@@ -9,7 +9,7 @@ var getUser = function(req) {
 		} else {
 			resolve(false)
 		}
-	})
+	});
 }
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
 						resolve(false);
 					}
 				}
-			})
-		})
+			});
+		});
 	}
 }

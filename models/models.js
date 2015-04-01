@@ -18,7 +18,7 @@ module.exports = (function() {
 		facebookId: String,
 		name: String,
 		admin: Boolean,
-	})
+	});
 
 	var Page = new Schema({
 		id: Schema.Types.ObjectId,
@@ -64,7 +64,7 @@ module.exports = (function() {
 	});
 
 	User.plugin(autoIncrement.plugin, 'UserModel');
-	User.plugin(findOrCreate)
+	User.plugin(findOrCreate);
 	Page.plugin(autoIncrement.plugin, 'PageModel');
 	Element.plugin(autoIncrement.plugin, 'ElementModel');
 	Position.plugin(autoIncrement.plugin, 'PositionModel');

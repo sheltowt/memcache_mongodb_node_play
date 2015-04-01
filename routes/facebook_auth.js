@@ -25,23 +25,25 @@ module.exports = (function() {
 		}, 
 		function(accessToken, refreshToken, profile, done){
 			return models.UserModel.findOrCreate({facebookId: profile.id}, function(err, user, created){
-				var cookieId
+				if (err) {
+					return res.redirect('/login');
+				}
 				if (created == true){
 					uniqueId = hat();
 					cookieId = uniqueId
 					models.UserModel.update({facebookId: user.facebookId}, {$set: {uniqueAccessToken: uniqueId}}, function(err, user){
 						return done(null, profile);
-					})
+					});
 				} else {
 					return done(null, profile);
 				}
-			})
+			});
 		}
 	));
 
 	router.get('/', passport.authenticate('facebook'), function(req, res){
 		
-	})
+	});
 
 	router.get('/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
   	function(req, res) {
@@ -59,4 +61,5 @@ module.exports = (function() {
 	});
 
 	return router;
+	
 })();
