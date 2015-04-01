@@ -36,9 +36,7 @@ module.exports = (function() {
 		elementId: Number,
 		ownerId: Number,
 		pageId: Number,
-		content: String,
-		positionId: Number,
-		contentId: Number,  
+		content: String,  
     modified: { type: Date, default: Date.now }
 	});
 

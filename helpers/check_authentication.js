@@ -16,7 +16,6 @@ module.exports = {
 	ensureAuthenticated: function(req, res) {
 		return new Promise(function(resolve){
 			getUser(req).then(function(facebookAuth){
-				var cookie
 				if (facebookAuth){
 					resolve(true);
 				} else {

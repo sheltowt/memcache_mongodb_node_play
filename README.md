@@ -10,6 +10,8 @@
 
 /data
 
+# echo 'flush_all' | nc localhost 11211
+
 # start multiple mongo instances
 # sudo mongod --configsvr --dbpath /data/db --port 27019
 

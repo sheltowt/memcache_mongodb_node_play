@@ -23,7 +23,6 @@ module.exports = {
 		return new Promise(function(resolve){
 			return memcached.get(key, function (err, data) {
 				if (err) {
-					console.log(err)
 					resolve(null)
 				} else if (data) {
 					resolve(data)

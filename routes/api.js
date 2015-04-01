@@ -44,6 +44,9 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
+				if (req.body.elementIds == null || req.body.ownerId == null || req.body.pageId == null){
+					return res.send('Proper information is not available to create a new page');	
+				}
 				return memcachedInterface.deleteMemcached("pagesAll").then(function(response){
 					page = new models.PageModel({
 						elementIds: req.body.elementIds,
@@ -101,22 +104,19 @@ module.exports = (function() {
 			if(!authenticated){
 				return res.redirect('/login');
 			} else {
+				if (req.body.elementIds == null || req.body.ownerId == null || req.body.pageId == null){
+					return res.send('Proper information is not available to update a page');	
+				}
 				return memcachedInterface.deleteMemcached("pagesAll").then(function(response){
 					memcacheString = "pages" + req.params.id.toString()
 					return memcachedInterface.deleteMemcached(memcacheString).then(function(response){
-						return models.PageModel.findById(req.params.id, function(err, page){
+						return models.PageModel.update({pageId: req.params.id}, { $set: {elementIds: req.body.elementIds, ownerId: req.body.ownerId, pageId: req.body.pageId}}, function(err, page){
 							if (!err && (page != null)){
-								page = new models.PageModel({
-									elementIds: req.body.elementIds,
-									ownerId: req.body.ownerId,
-									pageId: req.body.pageId
-								});
-								page.save();
 								return formatter.formatResponse(res, page).then(function(response){
 									return response
 								})
 							} else {
-								return res.send("Failed to find page " + req.params.id)
+								return res.send("Failed to update page " + req.params.id)
 							}
 						})
 					})
@@ -139,7 +139,7 @@ module.exports = (function() {
 					      if (!err) {
 					        memcachedKey = "page" + req.params.id.toString()
 									return memcachedInterface.deleteMemcached(memcachedKey, page).then(function(status){
-										return res.send('');
+										return res.send('Deleted page');
 									})			        
 					      } else {
 					      	return res.send("Failed to find page " + err)
