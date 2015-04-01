@@ -1,20 +1,25 @@
 # weebly_private
 
-
+# sudo service memcached start
+# to stop memcached launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
 # to start memcached
 # launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
 
 # start mongo
 # mongod
 
+/data
+
 # start multiple mongo instances
 # sudo mongod --configsvr --dbpath /data/db --port 27019
 
-# sudo mongod --configsvr --dbpath /data/db2 --port 27020
+# sudo mongod --configsvr --dbpath /data/db2 --port 27019
 
-# sudo mongod --configsvr --dbpath /data/db3 --port 27021
+# sudo mongod --configsvr --dbpath /data/db3 --port 27019
 
-# mongos --configdb 127.0.0.1:27019,127.0.0.1:27020,127.0.0.1:27021
+# mongos --configdb 127.0.0.1:27020,127.0.0.1:27021
+
+# mongos --configdb 127.0.0.1:27019
 
 # mongo --host 127.0.0.1 --port 27017
 
@@ -37,5 +42,8 @@ sh.addShard( "127.0.0.1:27017" )
 # for each element get 
 ##### content
 ##### position
+
+
+### Deploy a Sharded Cluster
 
 

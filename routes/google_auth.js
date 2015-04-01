@@ -31,11 +31,8 @@ module.exports = (function() {
 
 	router.get( '/callback', function (req, res) {
 		oauth2Client.getToken(req.query.code, function(err, tokens) {
-			if(err){
-				console.log(err)
-			}
-		  firstChunk = tokens.id_token.split(".")[0]
 		  if(!err) {
+		  	firstChunk = tokens.id_token.split(".")[0]
 		    oauth2Client.setCredentials(tokens);
 		    return models.UserModel.findOrCreate({googleId: firstChunk}, {googleAccessToken: tokens.access_token, googleIdToken: tokens.id_token}, function(err, user, created){
 		    	if (created == true) {
@@ -49,12 +46,13 @@ module.exports = (function() {
 			    		return res.redirect('/auth/google/success');
 			    }
 		    })
+		  } else {
+		  	return res.redirect('/login')
 		  }
 		});
 	});
 
 	router.get('/success', function (req, res) {
-		console.log('default page');
 	  res.send('you are successfully logged in');
 	});
 

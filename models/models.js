@@ -10,7 +10,6 @@ module.exports = (function() {
 
 	var User = new Schema({
 		id: Schema.Types.ObjectId,
-		type: String,
 		openId: String,
 		googleId: String,
 		googleIdToken: String,
@@ -27,7 +26,8 @@ module.exports = (function() {
 		ownerId: Number,
 		pageId: Number,
 		elementIds: Array,  
-    modified: { type: Date, default: Date.now }
+    modified: { type: Date, default: Date.now },
+    linkToCss: String,
 	});
 
 	var Element = new Schema({
@@ -61,6 +61,7 @@ module.exports = (function() {
 		ownerId: Number,
 		type: String,
 		elementId: Number,
+		content: String,
     modified: { type: Date, default: Date.now }
 	});
 

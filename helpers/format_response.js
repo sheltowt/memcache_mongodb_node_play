@@ -2,7 +2,7 @@ var Promise = require('bluebird'),
 	models = require('../models/models'),
 	json2html = require('node-json2html'),
 	js2xmlparser = require('js2xmlparser'),
-	fullPage = require('./generate_full_page');;
+	fullPage = require('./generate_full_page');
 
 module.exports = {
 	formatResponse: function(res, data) {

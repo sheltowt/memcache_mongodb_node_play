@@ -16,7 +16,6 @@ module.exports = {
 	ensureAuthenticated: function(req, res) {
 		return new Promise(function(resolve){
 			getUser(req).then(function(facebookAuth){
-				console.log(facebookAuth)
 				var cookie
 				if (facebookAuth){
 					resolve(true);
@@ -25,7 +24,6 @@ module.exports = {
 				  	return models.UserModel.findOne({uniqueAccessToken: req.cookies.access_token}, function(err, user){
 					  	if (err){
 					  		resolve(false);
-					  		console.log(err)
 					  	} else if (user){
 					  		resolve(true);
 					  	} else {
