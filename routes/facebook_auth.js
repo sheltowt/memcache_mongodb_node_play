@@ -42,7 +42,8 @@ module.exports = (function() {
 	));
 
 	router.get('/', passport.authenticate('facebook'), function(req, res){
-		
+		//nothing ever happens in here because it is redirected to the callback endpoint
+		//it is just necessary for the structure of router.get()
 	});
 
 	router.get('/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
