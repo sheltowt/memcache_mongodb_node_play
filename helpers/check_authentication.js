@@ -5,9 +5,9 @@ var Promise = require('bluebird'),
 var getUser = function(req) {
 	return new Promise(function(resolve){
 		if (req.isAuthenticated()){
-			resolve(true)
+			resolve(true);
 		} else {
-			resolve(false)
+			resolve(false);
 		}
 	});
 }

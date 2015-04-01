@@ -33,14 +33,14 @@ module.exports = {
 						case "content":
 							transform = {'tag':'div','html':'${content}'};
 							html = json2html.transform(data, transform)
-							return resolve(res.end(html, 'utf-8'))	
+							return resolve(res.end(html, 'utf-8'));	
 							break;
 						case "position":
 							return res.send("Only JSON and XML are available for this type, please specify .json or .xml");
 							break;
 						case "page":
 							return fullPage.returnFullHtml(res, data, single).then(function(html){
-								return resolve(res.end(html, 'utf-8'))
+								return resolve(res.end(html, 'utf-8'));
 							});
 						default:
 							return res.send("improper type");
@@ -55,7 +55,7 @@ module.exports = {
 					options["declaration"] = {}
 					options["declaration"]["include"] = false
 					var xmlData = js2xmlparser("data", data, options)
-					return resolve(res.send(xmlData))
+					return resolve(res.send(xmlData));
 				},
 			});
 		});

@@ -11,11 +11,11 @@ var retrieveElement = function(elementId, callback) {
 			if (data) {
 				positioning.incorporatePositioning(data).then(function(element){
 					content.injectContent(element).then(function(data){
-						callback(null, data)
-					})
-				})
+						callback(null, data);
+					});
+				});
 			} else {
-				callback(err, null)
+				callback(err, null);
 			}
 		});
 	});
@@ -25,14 +25,14 @@ var returnAllElements = function(page, callback){
 	process.nextTick(function(){
 		async.map(page.elementIds, retrieveElement.bind(retrieveElement), function(err, result){
 			if (err){
-				callback(null, "empty")
+				callback(null, "empty");
 			} else {
 				if (result[0]){
 					transform = {'tag':'div','html':'${content}'};
 					html = json2html.transform(result, transform)
-					callback(null, html)
+					callback(null, html);
 				} else {
-					callback(null, "empty")
+					callback(null, "empty");
 				}
 			}
 		});
@@ -44,7 +44,7 @@ var returnAllElementsPromise = function(page){
 		async.map(page.elementIds, retrieveElement.bind(retrieveElement), function(err, result){
 			transform = {'tag':'div','html':'${content}'};
 			html = json2html.transform(result, transform)		
-			resolve(html)
+			resolve(html);
 		});
 	});
 }
@@ -52,7 +52,7 @@ var returnAllElementsPromise = function(page){
 var returnAllPages = function(pages){
 	return new Promise(function(resolve){
 		async.map(pages, returnAllElements.bind(returnAllElements), function(err, htmlArray){
-			resolve(htmlArray)
+			resolve(htmlArray);
 		});
 	});
 }
@@ -67,7 +67,7 @@ module.exports = {
 					newString = ""
 					newString += headerString
 					newString += html
-					resolve(newString)
+					resolve(newString);
 				});
 			} else {
 				returnAllPages(pages).then(function(html){
@@ -79,7 +79,7 @@ module.exports = {
 							htmlStart += html[i]
 						}
 					}
-					resolve(htmlStart)
+					resolve(htmlStart);
 				});
 			}
 		});
