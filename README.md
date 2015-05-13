@@ -1,5 +1,3 @@
-# weebly_private
-
 # sudo service memcached start
 # to stop memcached launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
 # to start memcached
